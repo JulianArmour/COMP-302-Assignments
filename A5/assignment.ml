@@ -34,20 +34,32 @@ let rec extColouring (cht: chart) (colours : colouring) (cntry : country) =
 (* Question 1.4 *)
 
 let rec removeDuplicates lst =
-  raise NotImplemented
+    match lst with
+    | [] -> []
+    | hd::tl ->
+        if List.mem hd tl then hd::(removeDuplicates (List.filter (fun item -> item <> hd) tl))
+        else hd::(removeDuplicates tl)
 ;;
 
 (* Question 1.5 *)
 
 let countriesInChart (cht: chart) =
-  raise NotImplemented
+  let rec country_list =
+    function
+    | [] -> []
+    | pair::tl ->
+        match pair with
+        | (ctr1, ctr2) -> ctr1::ctr2::(country_list tl)
+  in removeDuplicates (country_list cht)
 ;;
 
 (* Quesiton 1.6 *)
 
 let colourTheCountries (cht : chart) =
-  raise NotImplemented
+    let countries = countriesInChart cht in
+    let rec colourCountries 
 ;;
+
 
 (* Question 2 *)
 
