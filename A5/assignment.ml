@@ -57,12 +57,42 @@ let countriesInChart (cht: chart) =
 
 let colourTheCountries (cht : chart) =
     let countries = countriesInChart cht in
-    let rec colourCountries 
+    List.fold_left (fun colouring country -> extColouring cht colouring country) [] countries
 ;;
 
 
 (* Question 2 *)
 
 let rec insert comp (item: int) (list: rlist) =
-  raise NotImplemented
+    match !list with
+    | Some {data = d; next = nl} ->
+        (match !nl with
+        | None ->
+            if comp (item, d) then
+                let oldList = cell2rlist {data = d; next = nl} in
+                list := Some {data = item; next = oldList}
+            else
+                let newTail = cell2rlist {data = item; next = ref None} in
+                list := Some {data = d; next = newTail}
+        | Some {data = nd; next = _} ->
+            if comp (item, d) then
+                let oldList = cell2rlist {data = d; next = nl} in
+                list := Some {data = item; next = oldList}
+            else if comp (item, nd) then
+                let newCell = cell2rlist {data = item; next = nl} in
+                list := Some {data = d; next = newCell}
+            else insert comp item nl)
+    | None -> list := Some {data = item; next = ref None}
 ;;
+
+
+type cell = { data : int; next : rlist}
+and rlist = cell option ref;;
+
+let cell2rlist (c:cell):rlist = ref (Some c);;
+
+
+
+let test = {data = 5; next = ref None} ;;
+let test2 = {data=10; next = ref None};;
+test := Some {data=5; next = cell2rlist test2};;
