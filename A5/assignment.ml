@@ -24,7 +24,11 @@ let canBeExtBy (col:colour) (ct: country) (ch : chart) =
 (* Question 1.3 *)
 
 let rec extColouring (cht: chart) (colours : colouring) (cntry : country) =
-    
+    match colours with
+    | [] -> [[cntry]]
+    | colour::tl_colours ->
+        if (canBeExtBy colour cntry cht) then (cntry::colour)::tl_colours
+        else colour::(extColouring cht tl_colours cntry)
 ;;
 
 (* Question 1.4 *)
