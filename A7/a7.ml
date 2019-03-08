@@ -50,8 +50,8 @@ let getType (e: typExp) =
 let rec unify (tau1: typExp) (tau2:typExp) : substitution =
     match (tau1, tau2) with
     | (TypInt, TypInt) -> []
-    | (TypVar a, TypVar b) -> [(a, TypVar b)]
-    | (Arrow (t1, t2), Arrow (t3, t4)) -> (unify t2 t4)@(unify t1 t3)
+    | (TypVar a, TypVar b) -> if a = b then [] else [(a, TypVar b)]
+    | (Arrow (t1, t2), Arrow (t3, t4)) -> let u1 = (unify t1 t3) in (unify (applySubst u1 t2) (applySubst u1 t4)) @ u1
     | (Lst l1, Lst l2) -> unify l1 l2
     | (TypInt, TypVar a) -> [(a, TypInt)]
     | (TypVar a, TypInt) -> [(a, TypInt)]
@@ -61,3 +61,5 @@ let rec unify (tau1: typExp) (tau2:typExp) : substitution =
     | (TypVar a, Lst l) -> if occurCheck a (Lst l) then failwith "Looping type variable." else [(a, Lst l)]
     | _ -> failwith "Expression types do not match."
 ;;
+- : substitution = [('a', TypVar 'c'); ('c', TypVar 'b'); ('a', TypInt)]
+- : substitution = [('b', TypInt); ('c', TypVar 'b'); ('a', TypInt)]
