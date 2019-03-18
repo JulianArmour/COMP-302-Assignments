@@ -65,14 +65,21 @@ let tempstore = ref 0
 let codegen (e: exptree) =
   let rec helper ((e: exptree), (tag: char)) =
     match e with
-    | Var c -> raise NotImplemented
-    | Expr(op, l, r) ->
-        if raise NotImplemented then
-          raise NotImplemented
+    | Var c ->
+        (match tag with
+        | '=' -> Printf.printf "LOAD  %c\n" c
+        | '+' -> Printf.printf "ADD  %c\n" c
+        | '*' -> Printf.printf "MUL  %c\n" c)
+    | Expr (op, l, r) ->
+        if tag = '=' then
+            match op with
+            | '+' -> helper (l, '='); helper (r, '+')
+            | '*' -> helper (l, '='); helper (r, '*')
         else begin
           tempstore := !tempstore + 1;
-          (* Your code for dealing with STORE goes here *)
-          raise NotImplemented;
+          Printf.printf "STORE %i\n" !tempstore;
+          helper (l, '=');
+          helper (r, op);
           (if (tag = '+') then
              Printf.printf "ADD %i\n" !tempstore
            else
